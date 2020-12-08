@@ -1,4 +1,5 @@
 // Librerías
+import java.io.IOException;
 import java.net.*;
 
 /**
@@ -6,23 +7,39 @@ import java.net.*;
  * @author Davibern
  * @version 1.0
  */
-public class Servidor {
+public class ReceptorUDP {
 
     // Atributos de clase
-    private static final int PUERTO = 2000;
+    private static final int PUERTO = 1500;
 
-    /**
-     * Constructor de clase
-     */
-    public Servidor() {
+    public static void main(String[] args) {
 
-        try {
-            ServerSocket servidor = new ServerSocket(PUERTO);
-            System.out.println("Escucho");
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+        if (args.length != 0) {
+            System.err.println("Uso: java ReceptorUDP");
+        } else try {
+
+            // Se crea el socket
+            DatagramSocket socket = new DatagramSocket(PUERTO);
+
+            // Crear el espacio para los mensajes
+            byte[] cadena = new byte[1000];
+            DatagramPacket mensaje = new DatagramPacket(cadena, cadena.length);
+
+            System.out.println("Esperando mensajes...");
+
+            while(true) {
+                // Se recibe y se muestra el mensaje
+                socket.receive(mensaje);
+                String datos = new String(mensaje.getData(), 0, mensaje.getLength());
+                System.out.println("Mensaje recibido: " + datos);
+            }
+
+
+        } catch (SocketException e) {
+            System.err.println("Socket: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Socket: " + e.getMessage());
         }
-
 
     }
 
